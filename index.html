@@ -439,7 +439,7 @@
                 p.addEventListener("click", function () {
                     var id = p.getAttribute("id");
 
-                    fetch(`https://protrader.vn/api/figma/search.php?title=${id}`)
+                    fetch(`https://myskillstore.com/wp-includes/api/search.php?title=${id}`)
                         .then(response => response.json())
                         .then(data => {
                             var popupContentText = data.length > 0 ? data[0].description : "No information available";
