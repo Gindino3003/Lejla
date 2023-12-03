@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Add Data</title>
+
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Include Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+
+    <h1>Add Data</h1>
+
+    <!-- Title -->
+    <div class="form-group">
+        <label for="title">Title:</label>
+        <select id="title" class="form-control" onchange="checkTitle()">
+            <option value="p0">Select</option>
+            <option value="p1">LEGAL</option>
+            <option value="p2">PEOPLE</option>
+            <option value="p3">CORPORATE DEVELOPEMENT</option>
+            <option value="p4">SCIENTIFIC MEETINGS</option>
+            <option value="p5">BUSINESS FAIRS & EVENTS</option>
+            <option value="p6">PEPERS, BOOKS & RESEARCH</option>
+            <option value="p7">UNIVERSAL LEARNING DESIGN</option>
+            <option value="p8">MULTIMEDIA STORYTELLING</option>
+            <option value="p9">DIVERSITY & INCLUSION</option>
+            <option value="p10">INTERACTION DESIGN</option>
+            <option value="p11">DESIGN THINKING</option>
+            <option value="p12"><b>ICT</b></option>
+            <option value="p13">SOFTWARE</option>
+            <option value="p14">HARDWARE</option>
+            <option value="p15">HOLOGRAMS</option>
+            <option value="p16">MACHINE LEARNING, ARTIFICIAL</option>
+            <option value="p17">INTELLIGENCE, ROBOTS & COBOTS</option>
+            <option value="p18"><b>ARCHITECTURE & ENGINEERING</b></option>
+            <option value="p29">2D, 3D AND INTERACTIVE RENDERINGS</option>
+            <option value="p20">MULTIMEDIA INSTALLATIONS</option>
+            <option value="p21">BUILDINGS, PAINTINGS, CARPENTRY</option>
+            <option value="p22">ELECTRICITY, SENSORS AND LASERS</option>
+            <option value="p23">GRANTS</option>
+            <option value="p24">DONATIONS</option>
+            <option value="p25">FUNDED PROGRAMS</option>
+            <option value="p26">ACCOUNTS & FINANCE</option>
+            <option value="p27">ONLINE CHAMPAIGNS</option>
+            <option value="p28">ONLINE EVENTS</option>
+            <option value="p29">WEBSITES</option>
+            <option value="p30">SOCIALS</option>
+            <option value="p31">LEAD MANAGEMENT</option>
+            <option value="p32">CUSTOMER ACQUISTION</option>
+            <option value="p33">MARKETING</option>
+            <option value="p34">SALES</option>
+            <option value="p35">SCHOOLS</option>
+            <option value="p36">MUSEUMS</option>
+            <option value="p37">COMPANIES</option>
+            <option value="p38">SIMULATION CENTERS</option>
+            <option value="p39">INTERNATIONAL ORGANIZATIONS</option>
+            <option value="p40">NATIONAL & REGIONAL GOVERNMENTS</option>
+            <option value="p41">REGULATORY AUTHORITIES & BODIES</option>
+            <option value="p42">UNIONS & PROFESSIONAL SOCIETIES</option>
+            <option value="p43">TOWNS & MUNICIPALITIES</option>
+            <option value="p44">BUSINESS ACCELERATORS</option>
+            <option value="p45">TECHNOLOGICAL PARKS</option>
+            <option value="p46">ESCAPE ROOMS</option>
+
+            
+
+
+        </select>
+    </div>
+
+    <!-- Description using Quill -->
+    <div class="form-group">
+        <label for="description">Description (Quill):</label>
+        <div id="editor" style="height: 200px;"></div>
+    </div>
+
+    <!-- Button to Add Data -->
+    <button onclick="addData()" class="btn btn-primary">Add Data</button>
+
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Include Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        // Initialize Quill
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block'],
+                    ['link'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['clean']
+                ]
+            }
+        });
+
+        function checkTitle() {
+            var selectedTitle = $('#title').val();
+
+            // Send GET request to API for checking title
+            axios.get(`https://protrader.vn/api/figma/search.php?title=${selectedTitle}`)
+                .then(function (response) {
+                    console.log(response.data);
+                    // Display description if found
+                    if (response.data.length > 0) {
+                        var foundDescription = response.data[0].description;
+                        quill.root.innerHTML = foundDescription;
+                    } else {
+                        quill.root.innerHTML = ""; // Clear Quill editor if not found
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        function addData() {
+            // Get values from input fields
+            var title = $('#title').val();
+            var description = quill.root.innerHTML;
+
+            // Create JSON object
+            var data = {
+                "title": title,
+                "description": description
+            };
+
+            // Send POST request to API
+            axios.post('https://protrader.vn/api/figma/api.php', data)
+                .then(function (response) {
+                    console.log(response.data);
+                    alert('Data added successfully!');
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    alert('Error adding data');
+                });
+        }
+    </script>
+
+</body>
+</html>
